@@ -13,6 +13,7 @@ class TclTk < Formula
 
   keg_only "Tk installs some X11 headers and OS X provides an (older) Tcl/Tk."
 
+  option :universal
   option 'enable-threads', 'Build with multithreading support'
   option 'without-tk', "Don't build the Tk (window toolkit)"
   option 'with-x11', 'Build X11-based Tk instead of Aqua-basd Tk'
@@ -20,10 +21,11 @@ class TclTk < Formula
   depends_on :x11 => :optional
 
   def install
+    ENV.universal_binary if build.universal?
     args = ["--prefix=#{prefix}", "--mandir=#{man}"]
     args << "--enable-threads" if build.include? "enable-threads"
     args << "--enable-64bit" if MacOS.prefer_64_bit?
-
+    
     cd 'unix' do
       system "./configure", *args
       system "make"
